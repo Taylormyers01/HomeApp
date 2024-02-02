@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/data/db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: homeapp123
+      MYSQL_DATABASE: homeapp
+volumes:
+  db:
+    driver:
+      local
+    
