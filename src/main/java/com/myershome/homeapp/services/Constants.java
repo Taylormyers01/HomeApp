@@ -2,6 +2,7 @@ package com.myershome.homeapp.services;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Data;
 
 import java.io.Serializable;
 

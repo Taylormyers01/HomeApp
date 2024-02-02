@@ -33,7 +33,7 @@ public class Task {
     @Column(name = "reoccuring")
     private Boolean reoccuring;
 
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Constants.Days.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "days", joinColumns = @JoinColumn(name = "task_id"))
     @Column(name = "days")
     private Set<Constants.Days> daysList = new HashSet<>();
