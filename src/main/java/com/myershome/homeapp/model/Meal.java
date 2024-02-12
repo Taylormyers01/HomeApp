@@ -3,10 +3,7 @@ package com.myershome.homeapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.*;
@@ -15,8 +12,7 @@ import java.util.*;
 @Table(name = "meal")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Meal implements Serializable {
 
     private static final long serialVersionUID = 1L;

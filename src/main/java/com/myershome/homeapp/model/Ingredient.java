@@ -1,10 +1,7 @@
 package com.myershome.homeapp.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ValueGenerationType;
 
 import java.io.Serializable;
@@ -15,8 +12,7 @@ import java.util.Set;
 @Table(name = "ingredient")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Ingredient implements Serializable {
 
     private static final long serialVersionUID = 1L;
