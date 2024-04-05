@@ -1,6 +1,7 @@
 package com.myershome.homeapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.id.factory.internal.AutoGenerationTypeStrategy;
 
@@ -11,18 +12,17 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "user")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
 
+    @NotNull
     @Column(name = "username")
     private String username;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    Set<Task> taskset = new HashSet<>();
+
+
 }

@@ -1,5 +1,5 @@
 spring:
   docker:
     compose:
-      enabled: true
+      enabled: false
       file: docker-compose.yaml

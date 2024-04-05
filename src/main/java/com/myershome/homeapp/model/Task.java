@@ -1,11 +1,15 @@
 package com.myershome.homeapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.myershome.homeapp.services.Constants;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 @Entity
@@ -17,19 +21,21 @@ public class Task {
 
     @Id
     @Column(name = "task_id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty
     @Column(name = "task_name", nullable = false)
     private String taskName;
+
 
     @Column(name = "completed")
     private Boolean completed;
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User user;
 
+    @NotNull
     @Column(name = "reoccuring")
     private Boolean reoccuring;
 
@@ -40,4 +46,11 @@ public class Task {
 
     @Column(name = "due_date")
     private Date dueDate;
+
+    public String getUserName() {
+        if(user != null){
+            return user.getUsername();
+        }
+        return "None";
+    }
 }

@@ -13,4 +13,3 @@ volumes:
   db:
     driver:
       local
-    

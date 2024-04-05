@@ -2,11 +2,9 @@ package com.myershome.homeapp.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ValueGenerationType;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "ingredient")

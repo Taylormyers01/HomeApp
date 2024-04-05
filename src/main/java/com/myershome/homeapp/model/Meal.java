@@ -1,11 +1,11 @@
 package com.myershome.homeapp.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.*;
 
 @Entity
@@ -37,5 +37,9 @@ public class Meal implements Serializable {
     private Date mealDate;
 
     @Column(name = "recipe_url")
-    private String recipeUrl;
+    private URL recipeUrl;
+
+    @Column(name = "picture_url")
+    private URL pictureUrl;
+
 }
