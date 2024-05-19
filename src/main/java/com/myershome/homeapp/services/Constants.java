@@ -10,14 +10,14 @@ import java.io.Serializable;
 public class Constants implements Serializable {
 
     public enum Days{
-        SUNDAY("sunday"),
-        MONDAY("monday"),
-        TUESDAY("tuesday"),
-        WEDNESDAY("wednesday"),
-        THURSDAY("thursday"),
-        FRIDAY("friday"),
-        SATURDAY("saturday");
-        private static final Days[] dayArray = values();
+        SUNDAY("Sunday"),
+        MONDAY("Monday"),
+        TUESDAY("Tuesday"),
+        WEDNESDAY("Wednesday"),
+        THURSDAY("Thursday"),
+        FRIDAY("Friday"),
+        SATURDAY("Saturday");
+        public static final Days[] dayArray = values();
         public final String value;
         private Days(String value){
             this.value = value;
