@@ -36,9 +36,7 @@ public class MealController {
         Ingredient ingredient = new Ingredient();
         ingredient.setIngredientName("pasta");
         ingredient.setOnShoppingList(true);
-        meal.getIngredientList().add(ingredient);
         meal.setMealName("Lasagna");
-        meal.setMealDate(new Date(2024,1,1));
         mealRepository.save(meal);
         return ResponseEntity.ok()
                 .body(meal);
@@ -46,9 +44,9 @@ public class MealController {
 
     @PostMapping()
     public ResponseEntity<Meal> addMeal(@RequestBody @Valid Meal meal){
-        if(meal.getId() == null){
-            return ResponseEntity.accepted()
-                    .body(mealService.save(meal));
+        Meal mealOut = mealService.save(meal);
+        if(mealOut != null){
+            return ResponseEntity.accepted().body(meal);
         }
         return ResponseEntity.badRequest()
                 .body(null);

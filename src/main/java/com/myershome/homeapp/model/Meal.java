@@ -1,9 +1,11 @@
 package com.myershome.homeapp.model;
 
 
+import com.myershome.homeapp.services.Constants;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.*;
@@ -25,21 +27,16 @@ public class Meal implements Serializable {
     @Column(name = "meal_name", nullable = false)
     private String mealName;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(
-            name = "rel_meal_ingredients",
-            joinColumns = @JoinColumn(name = "meal_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
-    )
-    private Set<Ingredient> ingredientList = new HashSet<>();
-
-    @Column(name = "meal_date", nullable = false)
-    private Date mealDate;
+    @Column(name = "meal_day", nullable = true)
+    private Constants.Days mealDay;
 
     @Column(name = "recipe_url")
-    private URL recipeUrl;
+    private String recipeUrl;
 
     @Column(name = "picture_url")
     private URL pictureUrl;
 
+    @Lob
+    @Column(name = "directions")
+    private String directions;
 }

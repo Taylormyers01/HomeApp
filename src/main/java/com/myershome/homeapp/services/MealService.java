@@ -1,14 +1,13 @@
 package com.myershome.homeapp.services;
 
-import com.myershome.homeapp.model.Ingredient;
 import com.myershome.homeapp.model.Meal;
 import com.myershome.homeapp.repository.IngredientRepository;
 import com.myershome.homeapp.repository.MealRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,19 +19,23 @@ public class MealService {
     IngredientRepository ingredientRepository;
 
     public Meal save(Meal meal){
-        Set<Ingredient> ingredientSet = new HashSet<>();
-        if(!meal.getIngredientList().isEmpty()){
-            for(Ingredient i: meal.getIngredientList()){
-                if(i.getId() != null && ingredientRepository.findById(i.getId()).isPresent()){
-                    ingredientSet.add(ingredientRepository.findById(i.getId()).get());
-                }
-                else{
-                    ingredientSet.add(i);
-                }
-            }
-        }
-        meal.setIngredientList(ingredientSet);
         return mealRepository.save(meal);
     }
+    public Optional<Meal> findByMealDay(Constants.Days day){
+        return mealRepository.findByMealDay(day);
+    }
 
+    public List<Meal> findAllByMealDayIsNull() {
+        return mealRepository.findAllByMealDayIsNull();
+    }
+    public List<Meal> findAllByMealDayNotNull(){
+        return mealRepository.findAllByMealDayNotNull();
+    }
+    public void saveAll(List<Meal> meals){
+        mealRepository.saveAll(meals);
+    }
+
+    public void delete(Meal meal) {
+        mealRepository.delete(meal);
+    }
 }
