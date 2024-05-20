@@ -1,13 +1,8 @@
-package com.myershome.homeapp.list.view;
+package com.myershome.homeapp.webapp;
 
-import com.vaadin.flow.component.HtmlComponent;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.IFrame;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.Lumo;
-import com.vaadin.flow.theme.lumo.LumoUtility;
-import org.hibernate.query.sqm.sql.BaseSqmToSqlAstConverter;
 
 @Route(value = "", layout = MainLayout.class) // map view to the root
     class MainView extends VerticalLayout {

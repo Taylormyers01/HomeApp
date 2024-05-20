@@ -1,6 +1,5 @@
-package com.myershome.homeapp.list.view.renderers;
+package com.myershome.homeapp.webapp.renderers;
 
-import com.myershome.homeapp.model.Meal;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;

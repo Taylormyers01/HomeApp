@@ -1,4 +1,4 @@
-package com.myershome.homeapp.list.view;
+package com.myershome.homeapp.webapp;
 
 import com.myershome.homeapp.model.Task;
 import com.myershome.homeapp.model.User;

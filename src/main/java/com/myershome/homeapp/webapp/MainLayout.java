@@ -1,4 +1,4 @@
-package com.myershome.homeapp.list.view;
+package com.myershome.homeapp.webapp;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
