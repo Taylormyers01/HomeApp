@@ -15,6 +15,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class Meal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,6 +38,6 @@ public class Meal implements Serializable {
     private URL pictureUrl;
 
     @Lob
-    @Column(name = "directions")
+    @Column(name = "directions", columnDefinition = "text")
     private String directions;
 }

@@ -4,6 +4,7 @@ import com.myershome.homeapp.webapp.renderers.CardRenderer;
 import com.myershome.homeapp.model.Meal;
 import com.myershome.homeapp.services.Constants;
 import com.myershome.homeapp.services.MealService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Image;
@@ -19,8 +20,9 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.splitlayout.SplitLayoutVariant;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldBase;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -47,33 +49,21 @@ public class MenuView extends Div {
     Div primary;
     SplitLayout splitLayout;
     TextField filterText = new TextField();
+    int col = 1;
 
     MenuView(MealService service){
         this.service = service;
-        HorizontalLayout header;
-
-        header = createHeader();
-        add(header);
-        header.setWidthFull();
-        header.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-
-
+        UI.getCurrent().getPage().retrieveExtendedClientDetails(details -> {
+            // This is your own method that you may do something with the screen width.
+            // Note that this method runs asynchronously
+             col = details.getScreenWidth()/205;
+        });
         update();
 
     }
 
     private HorizontalLayout createHeader() {
         HorizontalLayout header = new HorizontalLayout();
-        Button clearMeals = new Button("Clear meals", (e) ->{
-            List<Meal> meals = service.findAllByMealDayNotNull();
-            LOG.info(meals.toString());
-            meals.forEach(meal -> meal.setMealDay(null));
-            service.saveAll(meals);
-            update();});
-//        clearMeals.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        clearMeals.getStyle().set("margin-right", "auto").set("margin-left", "2%");
-
-
         Button addMeal = new Button(new Icon("lumo", "plus"),
                 e -> {
                     Meal meal = new Meal();
@@ -87,22 +77,35 @@ public class MenuView extends Div {
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> update());
-        filterText.getStyle().set("margin-right", "30%");
-        header.add(clearMeals,addMeal, filterText);
+        addMeal.getStyle().set("margin-left", "1%");
+        header.add(addMeal, filterText);
         return header;
     }
 
-    public Div configurePrimary(){
+    public VerticalLayout configurePrimary(){
         fillers.clear();
-        Div primary = new Div();
-
+        VerticalLayout primary = new VerticalLayout();
+        HorizontalLayout mealDays = new HorizontalLayout();
+        HorizontalLayout header = new HorizontalLayout();
+        DwGridLayout gridLayout = new DwGridLayout(7, 1);
+        Button clearMeals = new Button("Clear meals", (e) ->{
+            List<Meal> meals = service.findAllByMealDayNotNull();
+            LOG.info(meals.toString());
+            meals.forEach(meal -> meal.setMealDay(null));
+            service.saveAll(meals);
+            update();});
+        header.setWidthFull();
+        clearMeals.getStyle().set("margin-left", "1%");
+        header.add(clearMeals);
+        mealDays.add(header);
         for(Constants.Days day: Constants.Days.dayArray){
+            Div tile = new Div();
             H5 dayHeader = new H5(day.value + ":");
             dayHeader.addClassName(LumoUtility.Margin.LARGE);
-            primary.add(dayHeader);
+            tile.add(dayHeader);
             Optional<Meal> meal = service.findByMealDay(day);
             if(meal.isPresent()){
-                primary.add(new MealRenderer(meal.get()));
+                tile.add(new MealRenderer(meal.get()));
             }else{
                 Filler filler = new Filler(" ", day);
                 Image image = new Image();
@@ -110,10 +113,14 @@ public class MenuView extends Div {
                         LumoUtility.Width.FULL);
                 filler.addContent(image);
                 fillers.add(filler);
-                primary.add(filler);
+                tile.add(filler);
+
             }
+            gridLayout.addComponent(day.ordinal(), 0, tile);
         }
-        primary.addClassNames(LumoUtility.Padding.SMALL);
+        mealDays.addClassNames(LumoUtility.Padding.XSMALL);
+        primary.addClassName(LumoUtility.Padding.SMALL);
+        primary.add(header, gridLayout);
         return primary;
     }
 
@@ -129,18 +136,53 @@ public class MenuView extends Div {
         secondary.setHeightFull();
         return secondary;
     }
+    public VerticalLayout configureSecondary2(){
+        VerticalLayout secondary = new VerticalLayout();
+        var header = createHeader();
+        header.setWidthFull();
+        secondary.add(header);
+        Div gridLayout = new Div();
+        List<Meal> meals = service.findAllByMealDayIsNull();
 
-    public void update(){
-        if(splitLayout!=null){
-            remove(splitLayout);
+        int rows = (meals.size() / col) + 1;
+        DwGridLayout grid = new DwGridLayout(col, rows);
+        if(!filterText.getValue().isEmpty()){
+            meals = meals.stream().filter(meal -> meal.getMealName().contains(filterText.getValue())).toList();
         }
-        var secondary = configureSecondary();
-        splitLayout = new SplitLayout(configurePrimary(),secondary);
-        secondary.addClassName(LumoUtility.Flex.AUTO);
-        splitLayout.addThemeVariants(SplitLayoutVariant.LUMO_MINIMAL);
-        splitLayout.setSplitterPosition(40);
-        add(splitLayout);
+
+        int x = 0;
+        int mealNum = 0;
+        while(x < rows) {
+            for (int y = 0; y < col; y++){
+                if (mealNum < meals.size()){
+                    grid.addComponent(y, x, new MealRenderer(meals.get(mealNum)));
+                    mealNum++;
+                }
+            }
+            x++;
+        }
+        gridLayout.add(grid);
+        gridLayout.getStyle().set("overflow", "auto");
+        secondary.add(gridLayout);
+
+        return secondary;
     }
+
+public void update(){
+        removeAll();
+        Div main = new Div();
+        var secondary = configureSecondary2();
+        var primary = configurePrimary();
+        main.add(primary, secondary);
+        primary.addClassName(LumoUtility.Padding.SMALL);
+        primary.setWidthFull();
+        primary.setMaxHeight("30%");
+        secondary.setWidthFull();
+        secondary.setMaxHeight("400px");
+        secondary.addClassName(LumoUtility.Flex.GROW_NONE);
+
+        add(main);
+}
 
 
 
@@ -158,6 +200,8 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
         if(meal.getPictureUrl() != null){
             image.setSrc(meal.getPictureUrl().toString());
             image.setAlt(meal.getMealName());
+            image.addClassNames(LumoUtility.Height.XLARGE,
+                    LumoUtility.Width.FULL);
         }else{
             image.setSrc(imageUrl);
             image.setAlt(meal.getMealName());
@@ -231,6 +275,7 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
                     ((ComboBox<?>) field).setReadOnly(true);
                 }
             });
+            System.out.println(meal);
             update();
             dialog.close();
         });
@@ -238,8 +283,8 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
 
         Button editButton = new Button("Edit", (e) -> {
             fieldLayout.getChildren().forEach(field -> {
-                if(field instanceof TextField){
-                    ((TextField) field).setReadOnly(false);
+                if(field instanceof TextFieldBase<?,?>){
+                    ((TextFieldBase<?, ?>) field).setReadOnly(false);
                 }else if(field instanceof ComboBox<?>){
                     ((ComboBox<?>) field).setReadOnly(false);
                 }
@@ -250,6 +295,8 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
 
         dialog.getHeader().add(closeButton);
         dialog.getFooter().add(deleteButton, editButton, saveButton);
+        dialog.setWidth("500px");
+        fieldLayout.setWidthFull();
         if(!meal.getMealName().isEmpty()){
             saveButton.setEnabled(false);
         }else{
@@ -275,7 +322,7 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
         if(meal.getPictureUrl() != null){
             imageUrl.setValue(meal.getPictureUrl().toString());
         }
-        recipeUrl.addValueChangeListener(e -> {
+        imageUrl.addValueChangeListener(e -> {
             try {
                 meal.setPictureUrl(new URL(imageUrl.getValue()));
             } catch (MalformedURLException ex) {
@@ -283,10 +330,12 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
             }
         });
 
-        TextField mealInstruction = new TextField("Instructions");
+        TextArea mealInstruction = new TextArea("Instructions");
         if(meal.getDirections() != null){
             mealInstruction.setValue(meal.getDirections());
         }
+        mealInstruction.setMinHeight("150px");
+        mealInstruction.setMaxHeight("250px");
         mealInstruction.addValueChangeListener(e -> meal.setDirections(e.getValue()));
 
 
@@ -310,7 +359,6 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
             day.setReadOnly(readOnly);
             imageUrl.setReadOnly(readOnly);
         }
-
         return fieldLayout;
     }
 
