@@ -6,13 +6,22 @@ plugins {
 	id 'com.vaadin' version '24.3.3'
 }
 
+apply from: 'gradle/spring-rest-jumpstart.gradle'
+
 group = 'com.myershome'
 version = '0.0.1-SNAPSHOT'
 
 // mainClassName=
-
 java {
 	sourceCompatibility = '17'
+}
+//had to set to stop it from making 2 .jar files in build/libs
+jar{
+	enabled=false
+}
+
+vaadin {
+	productionMode = (boolean)"${System.getenv("VAADIN_PROD")}"
 }
 
 repositories {
