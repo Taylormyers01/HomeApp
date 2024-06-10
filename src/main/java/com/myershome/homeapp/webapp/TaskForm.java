@@ -26,7 +26,7 @@ public class TaskForm extends FormLayout {
 
     TextField taskName = new TextField("Task Name");
     Checkbox reoccuring = new Checkbox("Reoccurring");
-    ComboBox<User> user = new ComboBox<>("User");
+//    ComboBox<User> user = new ComboBox<>("User");
     MultiSelectComboBox<Constants.Days> daysList = new MultiSelectComboBox<>("Days");
     BeanValidationBinder<Task> binder = new BeanValidationBinder<>(Task.class);
     Button save = new Button("Save");
@@ -43,15 +43,15 @@ public class TaskForm extends FormLayout {
         this.userService = userService;
         binder.bindInstanceFields(this);
 
-        user.setItems(userService.getAllUser());
-        user.setItemLabelGenerator(User::getUsername);
+//        user.setItems(userService.getAllUser());
+//        user.setItemLabelGenerator(User::getUsername);
         this.daysList.setItems(daysList);
         this.daysList.setItemLabelGenerator(days -> days.value);
 
         add(    taskName,
                 reoccuring,
                 this.daysList,
-                user,
+//                user,
                 createButtonsLayout());
     }
 

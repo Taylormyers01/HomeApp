@@ -31,15 +31,15 @@ public class MainLayout extends AppLayout {
             LumoUtility.Padding.Horizontal.MEDIUM);
 
         addToNavbar(header);
-
-
     }
 
     private void createDrawer() {
         addToDrawer(new VerticalLayout(
                 new RouterLink("Main Page", MainView.class),
                 new RouterLink("Task", TaskView.class),
-                new RouterLink("Menu", MenuView.class)
+                new RouterLink("Menu", MenuView.class),
+                new RouterLink("Teddy Tracker", TeddyTracker.class)
         ));
+        setDrawerOpened(false);
     }
 }

@@ -63,7 +63,7 @@ public class TaskView extends VerticalLayout {
             button.setIcon(VaadinIcon.CIRCLE_THIN.create());
             return button;
         }));
-        grid.addColumn(task -> task.getUserName()).setHeader("username");
+//        grid.addColumn(task -> task.getUserName()).setHeader("username");
         grid.addColumn(Task::getDaysList).setHeader("dayList");
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
@@ -122,8 +122,8 @@ public class TaskView extends VerticalLayout {
         Button addContactButton = new Button("Add task");
         addContactButton.addClickListener(click -> addTask());
         sortingButton = new Select<>();
-        sortingButton.setItems("All Tasks", "Completed Tasks", "Today's Tasks");
-        sortingButton.setValue("All Tasks");
+        sortingButton.setItems("Incomplete Tasks","All Tasks", "Completed Tasks", "Today's Tasks");
+        sortingButton.setValue("Incomplete Tasks");
         sortingButton.addValueChangeListener(click -> updateList());
         var toolbar = new HorizontalLayout(filterText, addContactButton, sortingButton);
         toolbar.addClassName("toolbar");
@@ -139,6 +139,9 @@ public class TaskView extends VerticalLayout {
     private void updateList() {
         String sorting = sortingButton.getValue();
         switch (sorting){
+            case "Incomplete Tasks":
+                grid.setItems(service.filter(service.findAllCompleted(false), filterText.getValue()));
+                break;
             case "All Tasks":
                 grid.setItems(service.filter(service.findAll(), filterText.getValue()));
                 break;

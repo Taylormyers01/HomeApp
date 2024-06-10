@@ -28,9 +28,8 @@ public class Task {
     @Column(name = "task_name", nullable = false)
     private String taskName;
 
-
-    @Column(name = "completed")
-    private Boolean completed;
+    @Column(name = "completed", columnDefinition = "boolean default false")
+    private Boolean completed = false;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     private User user;
