@@ -6,7 +6,6 @@ import com.myershome.homeapp.services.Constants;
 import com.myershome.homeapp.services.MealService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -19,7 +18,6 @@ import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldBase;
@@ -38,30 +36,18 @@ import java.util.Objects;
 import java.util.Optional;
 
 
-
 @Route(value = "/menu", layout = MainLayout.class)
-public class MenuView extends Div {
+public class MenuView extends VerticalLayout {
     private static final Logger LOG = LoggerFactory.getLogger(MenuView.class);
-
-
     List<Filler> fillers = new ArrayList<>();
     MealService service;
-    Div primary;
-    SplitLayout splitLayout;
     TextField filterText = new TextField();
-    int col = 1;
+    VerticalLayout secondary;
 
     MenuView(MealService service){
         this.service = service;
-        UI.getCurrent().getPage().retrieveExtendedClientDetails(details -> {
-            // This is your own method that you may do something with the screen width.
-            // Note that this method runs asynchronously
-             col = details.getScreenWidth()/205;
-        });
         update();
-
     }
-
     private HorizontalLayout createHeader() {
         HorizontalLayout header = new HorizontalLayout();
         Button addMeal = new Button(new Icon("lumo", "plus"),
@@ -124,26 +110,43 @@ public class MenuView extends Div {
         return primary;
     }
 
-    public FormLayout configureSecondary(){
-        FormLayout secondary = new FormLayout();
-        List<Meal> meals = service.findAllByMealDayIsNull();
-        if(!filterText.getValue().isEmpty()){
-            meals = meals.stream().filter(meal -> meal.getMealName().contains(filterText.getValue())).toList();
-        }
-        for(Meal meal: meals){
-            secondary.add(new MealRenderer(meal), 1);
-        }
-        secondary.setHeightFull();
-        return secondary;
-    }
     public VerticalLayout configureSecondary2(){
         VerticalLayout secondary = new VerticalLayout();
         var header = createHeader();
         header.setWidthFull();
         secondary.add(header);
-        Div gridLayout = new Div();
-        List<Meal> meals = service.findAllByMealDayIsNull();
 
+
+        return secondary;
+    }
+
+    public void update(){
+        removeAll();
+        if(secondary != null){
+            secondary.removeAll();
+        }
+        Div main = new Div();
+        secondary = configureSecondary2();
+        var primary = configurePrimary();
+        main.add(primary, secondary);
+        primary.addClassName(LumoUtility.Padding.SMALL);
+        primary.setWidthFull();
+        primary.setMaxHeight("30%");
+        secondary.setWidthFull();
+        secondary.setMaxHeight("400px");
+        secondary.addClassName(LumoUtility.Flex.GROW_NONE);
+        UI.getCurrent().getPage().retrieveExtendedClientDetails(details -> {
+            handleScreenWidth(details.getBodyClientWidth());
+        });
+        add(main);
+}
+
+    private void handleScreenWidth(int screenWidth) {
+        Div gridLayout = new Div();
+        gridLayout.setClassName("Grid-Layout");
+        gridLayout.setWidthFull();
+        List<Meal> meals = service.findAllByMealDayIsNull();
+        int col = screenWidth/205;
         int rows = (meals.size() / col) + 1;
         DwGridLayout grid = new DwGridLayout(col, rows);
         if(!filterText.getValue().isEmpty()){
@@ -164,29 +167,10 @@ public class MenuView extends Div {
         gridLayout.add(grid);
         gridLayout.getStyle().set("overflow", "auto");
         secondary.add(gridLayout);
-
-        return secondary;
     }
 
-public void update(){
-        removeAll();
-        Div main = new Div();
-        var secondary = configureSecondary2();
-        var primary = configurePrimary();
-        main.add(primary, secondary);
-        primary.addClassName(LumoUtility.Padding.SMALL);
-        primary.setWidthFull();
-        primary.setMaxHeight("30%");
-        secondary.setWidthFull();
-        secondary.setMaxHeight("400px");
-        secondary.addClassName(LumoUtility.Flex.GROW_NONE);
 
-        add(main);
-}
-
-
-
-class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, HasStyle {
+    class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, HasStyle {
     Meal meal;
     String imageUrl = "https://www.shutterstock.com/shutterstock/photos/1083445310/display_1500/stock-vector-food-with-spoon-and-fork-symbol-logo-design-1083445310.jpg";
 
@@ -234,7 +218,12 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
                     });
             if(!e.isSuccessful()){
                 meal.setMealDay(null);
-                service.save(meal);
+                try {
+                    service.save(meal);
+                }catch (Exception exception){
+                    Utilities.errorNotification(exception.getLocalizedMessage());
+                    System.out.println(exception.getLocalizedMessage());
+                }
                 update();
             }
         });
@@ -267,7 +256,12 @@ class MealRenderer extends CardRenderer implements DragSource<MealRenderer>, Has
         deleteButton.getStyle().set("margin-left", "auto");
 
         Button saveButton = new Button("Save", (e) -> {
-            service.save(meal);
+            try {
+                service.save(meal);
+            }catch (Exception exception){
+                Utilities.errorNotification(exception.getLocalizedMessage());
+                System.out.println(exception.getLocalizedMessage());
+            }
             fieldLayout.getChildren().forEach(field -> {
                 if(field instanceof TextField){
                     ((TextField) field).setReadOnly(true);
@@ -380,7 +374,12 @@ class Filler extends CardRenderer implements HasStyle{
                     if (o instanceof MealRenderer mealRenderer){
                         mealRenderer.meal.setMealDay(day);
                         LOG.info(mealRenderer.meal + " has been updated");
-                        service.save(mealRenderer.meal);
+                        try {
+                            service.save(mealRenderer.meal);
+                        }catch (Exception exception){
+                            Utilities.errorNotification(exception.getLocalizedMessage());
+                            System.out.println(exception.getLocalizedMessage());
+                        }
                         update();
                     }
                 }));

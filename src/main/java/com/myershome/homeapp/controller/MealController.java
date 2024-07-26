@@ -44,11 +44,16 @@ public class MealController {
 
     @PostMapping()
     public ResponseEntity<Meal> addMeal(@RequestBody @Valid Meal meal){
-        Meal mealOut = mealService.save(meal);
-        if(mealOut != null){
+        try {
+            Meal mealOut = mealService.save(meal);
+            if(mealOut != null){
+                return ResponseEntity.accepted().body(meal);
+            }
+            return ResponseEntity.badRequest()
+                    .body(null);
+        }catch (Exception e){
+            System.out.println(e);
             return ResponseEntity.accepted().body(meal);
         }
-        return ResponseEntity.badRequest()
-                .body(null);
     }
 }

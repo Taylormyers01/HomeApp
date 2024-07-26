@@ -18,7 +18,10 @@ public class MealService {
     @Autowired
     IngredientRepository ingredientRepository;
 
-    public Meal save(Meal meal){
+    public Meal save(Meal meal) throws Exception {
+        if(meal.getMealDay() != null && mealRepository.findByMealDay(meal.getMealDay()).isPresent() ){
+            throw new Exception("A meal is already assigned to that day");
+        }
         return mealRepository.save(meal);
     }
     public Optional<Meal> findByMealDay(Constants.Days day){

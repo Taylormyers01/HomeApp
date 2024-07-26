@@ -21,7 +21,7 @@ services:
       VAADIN_PROD: true
     build: .
     ports:
-      - "8080:8080"
+      - "55000:8080"
 volumes:
   db:
     driver:

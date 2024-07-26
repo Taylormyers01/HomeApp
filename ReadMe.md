@@ -1,6 +1,6 @@
 Create Local MYSQL db 
 ```bash
-docker-compose down && docker-compose --profile dev up -d && ./gradlew bootRun
+docker-compose down && docker-compose --profile dev up -d && SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 
 ```
 Use production db 
@@ -8,13 +8,13 @@ Use production db
 ```bash
 SPRING_PROFILES_ACTIVE=prod ./gradlew build 
 ```
-- Create new image 
+- Create new container
 ```bash
 docker-compose down && docker-compose --profile prod up -d
 ```
-- Create tagged version from docker image
+- Create image from container
 ```bash
-docker tag homeapp-myapp taylormyers01/homeapp
+docker commit homeapp-myapp-1 taylormyers01/homeapp
 ```
 - Push image to docker hub
 ```bash
