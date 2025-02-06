@@ -1,11 +1,11 @@
 package com.myershome.homeapp.webapp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Div;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DwGridLayout extends Composite<Div> {
 
@@ -18,7 +18,6 @@ public class DwGridLayout extends Composite<Div> {
     private final static String CSS_CLASS_CELL_CONTENT_DEFAULT = "cell-content-default";
     private final static String CSS_BORDER_STYLE = "1px solid grey";
 
-
     private final int amountOfColumns;
     private final int amountOfRows;
     private boolean displayBorder;
@@ -30,20 +29,23 @@ public class DwGridLayout extends Composite<Div> {
         this.colRowCellMatrix = new Div[amountOfColumns][amountOfRows];
         this.getContent().getStyle().set("display", "grid");
         this.getContent().getStyle().set("grid-template-columns", "min-content ".repeat(this.amountOfColumns));
+        this.getContent().getStyle().set("grid-gap", "25px, 25px");
+        // this.getStyle().set("margin", "10px, 10px");
         this.getContent().getStyle().set("overflow-x", "auto");
-        this.getContent().getStyle().set("width", "100%");
 
         initCellMatrix();
         reloadGridComposite();
     }
 
     private void initCellMatrix() {
-        iterateOverMatrixAndExecute((colIndex, rowIndex) -> colRowCellMatrix[colIndex][rowIndex] = createCell(colIndex, rowIndex, null));
+        iterateOverMatrixAndExecute(
+                (colIndex, rowIndex) -> colRowCellMatrix[colIndex][rowIndex] = createCell(colIndex, rowIndex, null));
     }
 
     private void reloadGridComposite() {
         this.getContent().removeAll();
-        iterateOverMatrixAndExecute((colIndex, rowIndex) -> this.getContent().add(colRowCellMatrix[colIndex][rowIndex]));
+        iterateOverMatrixAndExecute(
+                (colIndex, rowIndex) -> this.getContent().add(colRowCellMatrix[colIndex][rowIndex]));
 
         if (displayBorder) {
             displayBorder();
@@ -83,7 +85,7 @@ public class DwGridLayout extends Composite<Div> {
 
     private List<Div> getComponentWrappersOfColumn(int columnIndex) {
         List<Div> components = new ArrayList<>();
-        //noinspection ManualArrayToCollectionCopy
+        // noinspection ManualArrayToCollectionCopy
         for (int i = 0; i < amountOfRows; i++) {
             components.add(colRowCellMatrix[columnIndex][i]);
         }
@@ -107,16 +109,22 @@ public class DwGridLayout extends Composite<Div> {
         } else {
             div.getClassNames().remove(CSS_CLASS_CELL_CONTENT_DEFAULT);
         }
+        div.getStyle().set("padding", "5px");
+        this.getContent().getStyle().set("width", "100%");
+        // this.getContent().getStyle().set("height", "100%");
+
         div.add(componentToInput == null ? new Div() : componentToInput);
         return div;
     }
 
     private void validateCoordinates(int columnIndex, int rowIndex) {
         if (columnIndex >= amountOfColumns) {
-            throw new IllegalArgumentException("ColumnIndex " + columnIndex + " is out of bounds of the grid. The biggest ColumnIndex in grid is: " + amountOfColumns);
+            throw new IllegalArgumentException("ColumnIndex " + columnIndex
+                    + " is out of bounds of the grid. The biggest ColumnIndex in grid is: " + amountOfColumns);
         }
         if (rowIndex >= amountOfRows) {
-            throw new IllegalArgumentException("RowIndex " + rowIndex + " is out of bounds of the grid. The biggest RowIndex in grid is: " + amountOfRows);
+            throw new IllegalArgumentException("RowIndex " + rowIndex
+                    + " is out of bounds of the grid. The biggest RowIndex in grid is: " + amountOfRows);
         }
     }
 
@@ -130,10 +138,11 @@ public class DwGridLayout extends Composite<Div> {
         validateCoordinates(columnIndex, rowIndex);
 
         Div[][] matrixWithNewComponent = new Div[amountOfColumns][amountOfRows];
-        iterateOverMatrixAndExecute((colIndexE, rowIndexE) -> matrixWithNewComponent[colIndexE][rowIndexE] =
-                (colIndexE == columnIndex && rowIndexE == rowIndex)
-                        ? createCell(colIndexE, rowIndexE, newComponent)
-                        : colRowCellMatrix[colIndexE][rowIndexE]);
+        iterateOverMatrixAndExecute((colIndexE,
+                rowIndexE) -> matrixWithNewComponent[colIndexE][rowIndexE] = (colIndexE == columnIndex
+                        && rowIndexE == rowIndex)
+                                ? createCell(colIndexE, rowIndexE, newComponent)
+                                : colRowCellMatrix[colIndexE][rowIndexE]);
         colRowCellMatrix = matrixWithNewComponent;
         reloadGridComposite();
     }
@@ -147,16 +156,17 @@ public class DwGridLayout extends Composite<Div> {
     }
 
     /**
-     * <b style="color: red;">Beware: Adding a new Component to a position with a tooltip will remove the tooltip.</b>
+     * <b style="color: red;">Beware: Adding a new Component to a position with a
+     * tooltip will remove the tooltip.</b>
      */
     public void addTooltipForComponent(int columnIndex, int rowIndex, String tooltip) {
         colRowCellMatrix[columnIndex][rowIndex].setTitle(tooltip);
         reloadGridComposite();
     }
 
-//    @SuppressWarnings("unused")
-//    private Label createDebugCell(int colIndex, int rowIndex) {
-//        return new Label(colIndex + ":" + rowIndex);
-//    }
+    // @SuppressWarnings("unused")
+    // private Label createDebugCell(int colIndex, int rowIndex) {
+    // return new Label(colIndex + ":" + rowIndex);
+    // }
 
 }

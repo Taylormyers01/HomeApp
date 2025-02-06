@@ -9,7 +9,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
-public class MainLayout extends AppLayout { 
+public class MainLayout extends AppLayout {
 
     public MainLayout() {
         createHeader();
@@ -19,16 +19,16 @@ public class MainLayout extends AppLayout {
     private void createHeader() {
         H1 logo = new H1("Myers HomeApp");
         logo.addClassNames(
-            LumoUtility.FontSize.LARGE, 
-            LumoUtility.Margin.MEDIUM);
+                LumoUtility.FontSize.LARGE,
+                LumoUtility.Margin.MEDIUM);
         DrawerToggle drawerToggle = new DrawerToggle();
-        var header = new HorizontalLayout(drawerToggle, logo );
+        var header = new HorizontalLayout(drawerToggle, logo);
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.setWidthFull();
         header.addClassNames(
-            LumoUtility.Padding.Vertical.NONE,
-            LumoUtility.Padding.Horizontal.MEDIUM);
+                LumoUtility.Padding.Vertical.NONE,
+                LumoUtility.Padding.Horizontal.MEDIUM);
 
         addToNavbar(header);
     }
@@ -38,7 +38,9 @@ public class MainLayout extends AppLayout {
                 new RouterLink("Main Page", MainView.class),
                 new RouterLink("Task", TaskView.class),
                 new RouterLink("Menu", MenuView.class),
-                new RouterLink("Teddy Tracker", TeddyTracker.class)
+                new RouterLink("Teddy Tracker", TeddyTracker.class),
+                new RouterLink("Notes", Notes.class)
+
         ));
         setDrawerOpened(false);
     }

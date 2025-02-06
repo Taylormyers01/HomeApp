@@ -25,7 +25,7 @@ public class TeddyEventController {
     private static final Logger LOG = LoggerFactory.getLogger(TeddyEvent.class);
 
     @GetMapping
-    public ResponseEntity<List<TeddyEvent>> getAllTeddyEvent(){
+    public ResponseEntity<List<TeddyEvent>> getAllTedEvent(){
         return ResponseEntity
                 .ok(service.findAll());
     }
@@ -49,7 +49,8 @@ public class TeddyEventController {
             return ResponseEntity.ok()
                     .body(service.save(teddyEvent));
         }
+        
         return ResponseEntity.badRequest()
-                .body(null);
+                .body(service.save(teddyEvent));
     }
 }

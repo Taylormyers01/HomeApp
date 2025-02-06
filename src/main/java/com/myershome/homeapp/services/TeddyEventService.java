@@ -21,6 +21,7 @@ public class TeddyEventService {
     public TeddyEvent save(TeddyEvent event) {
         return repository.save(event);
     }
+    public void delete(TeddyEvent event) {repository.delete(event);}
 
     public List<TeddyEvent> findAllByEventType(Constants.TeddyEventType type, LocalDate eventDate){
         return repository.findAllByEventTypeAndEventDateAfter(type, eventDate);
