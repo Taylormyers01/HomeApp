@@ -1,6 +1,8 @@
 package com.myershome.homeapp.services;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 public class Constants implements Serializable {
 
@@ -53,6 +55,33 @@ public class Constants implements Serializable {
         }
 
     }
+
+    public enum FRACTIONS {
+
+        ONE_FOURTH("¼",188, .25),
+        ONE_HALF("½", 189, .5),
+        ONE_THIRD("⅓", 8531, .33),
+        THREE_QUARTER("¾",190, .75),
+        TWO_THIRDS("⅔", 8532, .66),
+        ONE_EIGHT("⅛", 8539, .125),
+        THREE_EIGHTS("⅜", 8540, .375),
+        FIVE_EIGHTS("⅝", 8541, .625),
+        SEVEN_EIGHTS("⅞", 8542, .875);
+
+        public final String stringValue;
+        public final int hashCode;
+        public final double decimal;
+        public static final FRACTIONS[] fractionArray = values();
+        public static final List<FRACTIONS> fracList = List.of(values());
+
+        FRACTIONS(String stringValue, int hashCode, double decimal) {
+            this.stringValue = stringValue;
+            this.hashCode = hashCode;
+            this.decimal = decimal;
+        }
+
+    }
+
 
     public static class APIResources {
         private final static String baseURL = "/api";

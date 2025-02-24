@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-@Theme(variant = Lumo.DARK)
+@Theme(value="homeapp-theme",variant = Lumo.DARK)
 @SpringBootApplication
 @EnableScheduling
 public class HomeappApplication implements AppShellConfigurator {

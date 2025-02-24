@@ -3,9 +3,14 @@ package com.myershome.homeapp.webapp;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import com.myershome.homeapp.webapp.renderers.GridRenderer;
+import com.myershome.homeapp.webapp.renderers.MealRendererV2;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.theme.lumo.Lumo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +122,8 @@ public class MenuView extends VerticalLayout {
 
     }
 
+
+
     public VerticalLayout configurePrimary() {
         fillers.clear();
         VerticalLayout primary = new VerticalLayout();
@@ -137,11 +144,10 @@ public class MenuView extends VerticalLayout {
         for (Constants.Days day : Constants.Days.dayArray) {
             Div tile = new Div();
             H5 dayHeader = new H5(day.value + ":");
-            // dayHeader.addClassName(LumoUtility.Margin.LARGE);
             tile.add(dayHeader);
             Optional<Meal> meal = service.findByMealDay(day);
             if (meal.isPresent()) {
-                tile.add(new MealRenderer(meal.get(), true));
+                tile.add(new MealRendererV2(meal.get(), service, ingredientItemService));
             } else {
                 Filler filler = new Filler(" ", day);
                 Image image = new Image();
@@ -183,28 +189,41 @@ public class MenuView extends VerticalLayout {
         // secondary.setSizeFull();
         secondary.setHeight("60%");
 
-        UI.getCurrent().getPage().retrieveExtendedClientDetails(details -> {
-            handleScreenWidth(details.getBodyClientWidth());
-        });
+//        UI.getCurrent().getPage().retrieveExtendedClientDetails(details -> {
+//            handleScreenWidth(details.getBodyClientWidth());
+//        });
+        handleScreenWidthV2();
         add(primary, secondary);
+    }
+
+    public void handleScreenWidthV2(){
+        GridRenderer gr = new GridRenderer();
+        List<Meal> meals = service.findAllByMealDayIsNull();
+        if (!filterText.getValue().isEmpty()) {
+            meals = meals.stream().filter(meal -> meal.getMealName().toLowerCase()
+                    .contains(filterText.getValue().toLowerCase())).toList();
+        }
+        meals = meals.stream().sorted(Comparator.comparing(Meal::getMealName)).toList();
+        for (Meal m: meals){
+            gr.add(new MealRendererV2(m, service, ingredientItemService));
+        }
+        secondary.add(gr);
     }
 
     private void handleScreenWidth(int screenWidth) {
         VerticalLayout gridLayout = new VerticalLayout();
         gridLayout.setClassName("Grid-Layout");
-        // gridLayout.setWidthFull();
-        // gridLayout.setSizeFull();
         List<Meal> meals = service.findAllByMealDayIsNull();
         String hold = new CardRenderer("test").maxWidth;
         int cardWidth = Integer.parseInt(hold.split("px")[0]) + 50;
         int col = screenWidth / cardWidth;
         int rows = (meals.size() / col) + 1;
         DwGridLayout grid = new DwGridLayout(col, rows);
-        // grid.getStyle().set("padding", "10px, 10px");
         if (!filterText.getValue().isEmpty()) {
-            meals = meals.stream().filter(meal -> meal.getMealName().contains(filterText.getValue())).toList();
+            meals = meals.stream().filter(meal -> meal.getMealName().toLowerCase()
+                    .contains(filterText.getValue().toLowerCase())).toList();
         }
-
+        meals = meals.stream().sorted(Comparator.comparing(Meal::getMealName)).toList();
         int x = 0;
         int mealNum = 0;
         while (x < rows) {
@@ -218,7 +237,6 @@ public class MenuView extends VerticalLayout {
         }
         gridLayout.add(grid);
         grid.setDisplayBorder(true);
-        // gridLayout.getStyle().set("overflow", "auto");
         secondary.add(gridLayout);
     }
 
@@ -380,6 +398,7 @@ public class MenuView extends VerticalLayout {
             mealInstruction.addValueChangeListener(e -> meal.setDirections(e.getValue()));
 
             VerticalLayout ingGrid = configureIngredientItemGrid(meal);
+            ingGrid.setWidthFull();
 
             ComboBox<Constants.Days> day = new ComboBox<>();
             day.setItems(Constants.Days.dayArray);
@@ -411,24 +430,24 @@ public class MenuView extends VerticalLayout {
             Grid<IngredientItem> grid = new Grid<>(IngredientItem.class, false);
             Editor<IngredientItem> editor = grid.getEditor();
 
-            Grid.Column<IngredientItem> amountColumn = grid.addColumn(ingItem -> ingItem.getAmount())
+            Grid.Column<IngredientItem> amountColumn = grid.addColumn(ingItem -> ingItem.amountFrac())
                     .setHeader("Amount")
                     .setWidth("100px").setFlexGrow(0);
             Grid.Column<IngredientItem> measureColumn = grid.addColumn(IngredientItem::getMeasurement)
                     .setHeader("Measurement").setWidth("160px").setFlexGrow(0);
             Grid.Column<IngredientItem> ingredientName = grid.addColumn(ingItem -> {
                 return ingItem.getIngName();
-            })
-                    .setHeader("Ingredient Name");
+            }).setHeader("Ingredient Name");
+            ingredientName.setFlexGrow(3);
             Grid.Column<IngredientItem> editColumn = grid.addComponentColumn(ingItem -> {
-                Button editButton = new Button("Edit");
+                Button editButton = new Button(LumoIcon.EDIT.create());
                 editButton.addClickListener(e -> {
                     if (editor.isOpen())
                         editor.cancel();
                     grid.getEditor().editItem(ingItem);
                 });
                 return editButton;
-            }).setWidth("100px").setFlexGrow(0);
+            }).setWidth("65px").setFlexGrow(0);
 
             Grid.Column<IngredientItem> deleteColumn = grid.addComponentColumn(ingItem -> {
                 Button deleteButton = new Button(VaadinIcon.CLOSE.create());
@@ -473,7 +492,7 @@ public class MenuView extends VerticalLayout {
                     .bind(IngredientItem::getIngName, IngredientItem::setIngName);
             ingredientName.setEditorComponent(ingNameField);
 
-            Button saveButton = new Button("Save", e -> {
+            Button saveButton = new Button(LumoIcon.CHECKMARK.create(), e -> {
                 LOG.info("Editor Item: " + editor.getItem());
                 ingredientItemService.save(editor.getItem());
                 refreshGrid(grid, m);

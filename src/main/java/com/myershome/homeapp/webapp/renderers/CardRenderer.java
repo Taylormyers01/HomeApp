@@ -8,28 +8,21 @@ import com.vaadin.flow.component.html.H4;
 
 @CssImport("./styles/card-style.css")
 public class CardRenderer extends Div {
-        Div div = new Div();
         Div content = new Div();
         H4 title = new H4();
         String titleText;
-        public String maxHeight = "125px";
+        public String maxHeight = "200px";
         public String maxWidth = "150px";
-        public String none = " ";
 
         public CardRenderer(String titleText) {
 
                 this.titleText = titleText;
                 title.setText(titleText);
-                // title.setId("id");
-
+//                 title.setId("id");
                 title.addClassName("title");
                 content.addClassName("container");
-                div.add(content, title);
-                div.setSizeFull();
+                add(content, title);
                 addClassName("card");
-                setHeight(maxHeight);
-                setWidth(maxWidth);
-                add(div);
                 title.setWidthFull();
                 setSizeFull();
         }

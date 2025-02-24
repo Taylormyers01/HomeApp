@@ -1,6 +1,7 @@
 package com.myershome.homeapp.services;
 
 
+import com.github.javaparser.quality.NotNull;
 import com.myershome.homeapp.model.Task;
 import com.myershome.homeapp.repository.TaskRepository;
 import com.myershome.homeapp.repository.UserRepository;
@@ -35,7 +36,10 @@ public class TaskService{
     }
 
     public List<Task> filter(List<Task> tasks, String filterText){
-        return tasks.stream().filter(task -> task.getTaskName().contains(filterText)).collect(Collectors.toList());
+
+        return tasks.stream().filter(task -> task.getTaskName().toLowerCase()
+                .contains(filterText.strip().toLowerCase()))
+                .collect(Collectors.toList());
     }
     public List<Task> findAll(){
         return taskRepository.findAll();
@@ -59,12 +63,8 @@ public class TaskService{
         return taskRepository.save(task);
     }
 
-    public List<Task> getAllTaskByDay(@Valid Days day){
-        if(day!=null){
-            return this.taskRepository.findAllByDaysListContaining(day);
-        }else{
-            return null;
-        }
+    public List<Task> getAllTaskByDay(@NotNull Days day){
+        return this.taskRepository.findAllByDaysListContaining(day);
     }
 
     public void taskWeeklyCronJob(){
