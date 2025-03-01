@@ -9,6 +9,7 @@ import com.myershome.homeapp.webapp.MenuView;
 import com.myershome.homeapp.webapp.Utilities;
 
 import com.myershome.homeapp.webapp.ValidationMessage;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -31,15 +32,9 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.DoubleRangeValidator;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,12 +42,12 @@ import java.util.List;
 
 
 
-public class MealRendererV2 extends CardRendererVaadin implements DragSource<MealRendererV2> {
-    Meal meal;
+public class MealRendererV2 extends CardRendererVaadin implements DragSource<MealRendererV2>, HasStyle {
+    public Meal meal;
     String imageUrl = "https://www.shutterstock.com/shutterstock/photos/1083445310/display_1500/stock-vector-food-with-spoon-and-fork-symbol-logo-design-1083445310.jpg";
     IngredientItemService ingredientItemService;
     MealService service;
-    Dialog dialog;
+    public Dialog dialog;
     private static final Logger LOG = LoggerFactory.getLogger(MealRendererV2.class);
 
     public MealRendererV2(Meal meal, MealService mealService, IngredientItemService ingredientItemService) {

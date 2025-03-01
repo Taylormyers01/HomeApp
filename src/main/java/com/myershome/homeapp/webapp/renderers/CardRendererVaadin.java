@@ -10,34 +10,52 @@ public class CardRendererVaadin extends Div {
 
 
      private H4 titleText;
-     private Image content;
+     public Image content;
      public CardRendererVaadin(){
          new CardRendererVaadin("empty Title");
      }
 
      public CardRendererVaadin(String title){
          Div container = new Div();
-         content = new Image();
+         this.content = new Image();
          titleText = new H4(title);
-         setHeight("200px");
-         setWidth("150px");
-         setMaxWidth("150px");
-         setMaxHeight("200px");
+
          StreamResource imageResource = new StreamResource("question_mark.jpg",
                  () -> getClass().getResourceAsStream("/images/question_mark.jpg"));
-
          content.setSrc(imageResource);
-         content.getStyle().set("opacity", ".25");
+         content.getStyle().set("opacity", ".05");
+
          container.add(titleText);
          add(content, container);
 
-         addClassNames(LumoUtility.BoxShadow.MEDIUM, LumoUtility.Background.PRIMARY_10, LumoUtility.Flex.GROW_NONE,
-                 LumoUtility.Overflow.HIDDEN, LumoUtility.BorderRadius.SMALL);
+         addClassNames(
+                 LumoUtility.BoxShadow.XSMALL,
+                 LumoUtility.Background.TRANSPARENT,
+                 LumoUtility.BorderRadius.MEDIUM,
+                 LumoUtility.JustifyContent.CENTER,
+                 LumoUtility.Padding.NONE,
+                 LumoUtility.Margin.NONE,
+                 LumoUtility.BorderColor.CONTRAST_30,
+                 LumoUtility.Border.ALL,
+                 LumoUtility.Overflow.HIDDEN,
+                 LumoUtility.Flex.GROW_NONE,
+                 LumoUtility.Flex.SHRINK
+         );
 
-         container.addClassNames(LumoUtility.Background.CONTRAST_20, LumoUtility.TextAlignment.CENTER,
-                  LumoUtility.Overflow.HIDDEN);
-         container.setHeight("25%");
-         content.setMaxHeight("75%");
+         container.addClassNames(
+                 LumoUtility.Background.CONTRAST_30,
+                 LumoUtility.TextAlignment.CENTER,
+                 LumoUtility.Overflow.HIDDEN,
+                 LumoUtility.Margin.NONE
+         );
+         titleText.addClassNames(LumoUtility.TextOverflow.CLIP);
+         container.setWidthFull();
+         container.setMaxHeight("25px");
+         content.setMaxHeight("175%");
+         content.setWidthFull();
+         setMaxWidth("150px");
+         setMaxHeight("200px");
+
 
      }
 
