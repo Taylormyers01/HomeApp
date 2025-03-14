@@ -54,4 +54,11 @@ public class Meal implements Serializable {
     // fetch = FetchType.EAGER, cascade = CascadeType.REMOVE
     @OneToMany(fetch = FetchType.EAGER)
     private List<IngredientItem> ingredientItems;
+
+    public URL getPictureUrl(){
+        if (pictureUrl != null){
+            return pictureUrl;
+        }
+        return null;
+    }
 }

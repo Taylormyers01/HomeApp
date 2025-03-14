@@ -9,6 +9,9 @@ import com.myershome.homeapp.webapp.MenuView;
 import com.myershome.homeapp.webapp.Utilities;
 
 import com.myershome.homeapp.webapp.ValidationMessage;
+import com.vaadin.flow.component.ClickNotifier;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -42,7 +45,7 @@ import java.util.List;
 
 
 
-public class MealRendererV2 extends CardRendererVaadin implements DragSource<MealRendererV2>, HasStyle {
+public class MealRendererV2 extends ReactCard implements DragSource<MealRendererV2>, HasStyle, HasComponents, ClickNotifier<MealRendererV2> {
     public Meal meal;
     String imageUrl = "https://www.shutterstock.com/shutterstock/photos/1083445310/display_1500/stock-vector-food-with-spoon-and-fork-symbol-logo-design-1083445310.jpg";
     IngredientItemService ingredientItemService;
@@ -57,29 +60,8 @@ public class MealRendererV2 extends CardRendererVaadin implements DragSource<Mea
         this.service = mealService;
         this.meal = meal;
         if (meal.getPictureUrl() != null) {
-            this.setImageByUrl(meal.getPictureUrl().toString());
+            this.setValue(meal.getPictureUrl().toString());
         }
-        DragSource<MealRendererV2> dragSource = DragSource.create(this);
-        dragSource.setDragData(this);
-        setDraggable(true);
-
-        dragSource.addDragStartListener(e -> {
-            LOG.info("started drag event for mealId: " + meal.getId());
-            e.getComponent().meal.setMealDay(null);
-        });
-        dragSource.addDragEndListener(e -> {
-            if (!e.isSuccessful()) {
-                meal.setMealDay(null);
-                LOG.info("Failed Drag Event");
-                try {
-                    service.save(meal);
-                } catch (Exception exception) {
-                    Utilities.errorNotification(exception.getLocalizedMessage());
-                    System.out.println(exception.getLocalizedMessage());
-                }
-            }
-        });
-
         dialog = configureDialog();
         addClickListener(e -> dialog.open());
         add(dialog);
