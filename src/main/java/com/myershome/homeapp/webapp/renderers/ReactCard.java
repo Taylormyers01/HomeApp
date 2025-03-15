@@ -1,6 +1,7 @@
 package com.myershome.homeapp.webapp.renderers;
 
 
+import com.myershome.homeapp.services.Constants;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.react.ReactAdapterComponent;
@@ -11,13 +12,19 @@ import com.vaadin.flow.component.react.ReactAdapterComponent;
 public class ReactCard extends ReactAdapterComponent {
 
     public ReactCard(){
-        this("", null);
-    }
-    public ReactCard(String title){
-        this(title, null);
+        this(Constants.CARDTYPES.ICON, "", null);
     }
 
-    public ReactCard(String title, String value){
+    public ReactCard(Constants.CARDTYPES cardtype){
+        this(cardtype,"", null);
+    }
+
+    public ReactCard(String title){
+        this(Constants.CARDTYPES.ICON, title, null);
+    }
+
+    public ReactCard(Constants.CARDTYPES cardType, String title, String value){
+        this.setType(cardType.value);
         this.setTitle(title);
         this.setValue(value);
     }
@@ -33,6 +40,14 @@ public class ReactCard extends ReactAdapterComponent {
 
     public void setValue(String value){
         setState("value", value);
+    }
+
+    public void setType(String value){
+        setState("type", value);
+    }
+
+    public void setSubtitle(String value){
+        setState("subtitle", value);
     }
 
 //    public void addValueChangeListener(SerializableConsumer<String> onChange) {

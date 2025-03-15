@@ -75,7 +75,11 @@ public class IngredientItem {
     }
 
     public String cleanString() {
-        return String.format("%s %s %s ", amountFrac(), measurement.value, ingredient.getIngName());
+        if(measurement != Measurements.NONE){
+            return String.format("%s %s %s ", amountFrac(), measurement.value, ingredient.getIngName());
+        }
+        return String.format("%s %s ", amountFrac(), ingredient.getIngName());
+
     }
 
     public String amountFrac() {

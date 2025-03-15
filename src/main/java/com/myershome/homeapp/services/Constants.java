@@ -56,6 +56,17 @@ public class Constants implements Serializable {
 
     }
 
+    public enum CARDTYPES{
+
+        ICON("ICON"),
+        CONTENT("CONTENT");
+
+        public final String value;
+        CARDTYPES(String value){
+            this.value = value;
+        }
+    }
+
     public enum FRACTIONS {
 
         ONE_FOURTH("¼",188, .25),

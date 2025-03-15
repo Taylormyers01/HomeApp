@@ -72,4 +72,8 @@ public class IngredientItemService {
                 save(item);
                 return item;
         }
+
+        public List<IngredientItem> findAllById(List<Long> ids) {
+                return ingredientItemRepository.findAllById(ids);
+        }
 }

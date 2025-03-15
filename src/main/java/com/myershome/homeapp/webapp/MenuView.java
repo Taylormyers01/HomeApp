@@ -1,11 +1,14 @@
 package com.myershome.homeapp.webapp;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
+import com.myershome.homeapp.model.IngredientItem;
 import com.myershome.homeapp.webapp.renderers.GridRenderer;
+import com.myershome.homeapp.webapp.renderers.IngItemCard;
 import com.myershome.homeapp.webapp.renderers.MealRendererV2;
 import com.myershome.homeapp.webapp.renderers.ReactCard;
 import com.vaadin.flow.component.dnd.DragSource;
@@ -55,7 +58,6 @@ public class MenuView extends VerticalLayout {
         menu = new Tab("Menu");
         ingredients = new Tab("Ingredients");
         Tabs tabs = new Tabs();
-//        tabs.setAutoselect(false);
 
         tabs.addSelectedChangeListener(
                 event -> setContent(event.getSelectedTab()));
@@ -76,7 +78,8 @@ public class MenuView extends VerticalLayout {
         if (tab.equals(menu)) {
             content.add(menuContent);
         } else if (tab.equals(ingredients)) {
-            content.add(new Paragraph("This is the Payment tab"));
+            content.add(ingredientsTab());
+//            new Paragraph("This is the Payment tab")
         }
     }
 
@@ -248,6 +251,69 @@ public class MenuView extends VerticalLayout {
         });
         return rendererV2;
     }
+
+    private GridRenderer ingredientsTab(){
+        List<Meal> meals = service.findAllByMealDayNotNull();
+        GridRenderer gr = new GridRenderer();
+
+//        Get an all
+        gr.add(getAllIngredientCard(meals));
+//        get per day
+
+        gr.addAll(getAllCardsByDay(meals));
+        return gr;
+    }
+
+    private ReactCard getAllIngredientCard(List<Meal> meals){
+        List<Long> ids = new ArrayList<>();
+        for (Meal m: meals){
+            ids.addAll(getIngredientItemId(m));
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
+        String startRange = LocalDate.now().with(TemporalAdjusters.previousOrSame( DayOfWeek.SUNDAY)).format(formatter);
+        String endRange = LocalDate.now().with(TemporalAdjusters.nextOrSame( DayOfWeek.SATURDAY)).format(formatter);
+
+        String sb = getIngredientItemsString(ids);
+
+        System.out.println(sb);
+        String value = "All Meal Ingredients";
+        String title = "Week Range of " + startRange + "-" + endRange;
+        return createIngredientCard(value, title, sb);
+    }
+
+    private ReactCard createIngredientCard(String value, String title, String subtitle){
+        return new IngItemCard(title, value, subtitle);
+    }
+
+    private List<Long> getIngredientItemId(Meal meal){
+        List<Long> ids = new ArrayList<>();
+        for(IngredientItem item: meal.getIngredientItems()){
+            ids.add(item.getId());
+        }
+        return ids;
+    }
+
+    private String getIngredientItemsString(List<Long> ids){
+        List<IngredientItem> ingItems = ingredientItemService.findAllById(ids);
+        StringBuilder sb = new StringBuilder();
+        for(IngredientItem item: ingItems){
+            sb.append(item.cleanString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    private List<ReactCard> getAllCardsByDay(List<Meal> meals){
+        List<ReactCard> cards = new ArrayList<>();
+        Collections.sort(meals, Comparator.comparingInt(m -> m.getMealDay().ordinal()));
+        for(Meal m: meals){
+            List<Long> ids = getIngredientItemId(m);
+            ReactCard card = createIngredientCard(m.getMealDay().value, m.getMealName(), getIngredientItemsString(ids));
+            cards.add(card);
+        }
+        return cards;
+    }
+
 
 
     class Filler extends ReactCard implements HasStyle {
