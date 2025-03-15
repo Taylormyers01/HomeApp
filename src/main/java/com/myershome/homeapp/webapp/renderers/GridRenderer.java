@@ -13,10 +13,10 @@ public class GridRenderer extends Div {
                 LumoUtility.Grid.Column.COLUMNS_2,
                 LumoUtility.Grid.Breakpoint.Small.COLUMNS_2,
                 LumoUtility.Grid.Breakpoint.Medium.COLUMNS_4,
-                LumoUtility.Grid.Breakpoint.Large.COLUMNS_4,
+                LumoUtility.Grid.Breakpoint.Large.COLUMNS_6,
                 LumoUtility.Grid.Breakpoint.XLarge.COLUMNS_6,
-                LumoUtility.Gap.Row.MEDIUM,
-                LumoUtility.Gap.Column.XLARGE);
+                LumoUtility.Gap.Row.SMALL,
+                LumoUtility.Gap.Column.SMALL);
 
     }
 

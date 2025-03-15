@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import com.myershome.homeapp.webapp.renderers.CardRendererVaadin;
 import com.myershome.homeapp.webapp.renderers.GridRenderer;
 import com.myershome.homeapp.webapp.renderers.MealRendererV2;
 import com.myershome.homeapp.webapp.renderers.ReactCard;
@@ -85,10 +84,6 @@ public class MenuView extends VerticalLayout {
         configureSecondary2();
         configurePrimary();
 
-        primary.setSizeFull();
-        primary.setHeight("40%");
-        secondary.setHeight("60%");
-
         menuContent.add(primary, secondary);
 
     }
@@ -104,6 +99,14 @@ public class MenuView extends VerticalLayout {
                     header.add(mealRenderer.dialog);
                     mealRenderer.dialog.open();
                 });
+        Button clearMeals = new Button("Clear meals", (e) -> {
+            List<Meal> meals = service.findAllByMealDayNotNull();
+            LOG.info(meals.toString());
+            meals.forEach(meal -> meal.setMealDay(null));
+            service.saveAll(meals);
+            update();
+        });
+        clearMeals.getStyle().set("margin-left", "0%");
         Button parser = configureParserButton();
         parser.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         filterText.setPlaceholder("Filter by name...");
@@ -113,8 +116,8 @@ public class MenuView extends VerticalLayout {
             secondaryGrid.removeAll();
             configureGrid("SECONDARY");
         });
-        addMeal.getStyle().set("margin-left", "1%");
-        header.add(addMeal, filterText, parser);
+        addMeal.getStyle().set("margin-left", "0%");
+        header.add(addMeal, clearMeals, filterText, parser);
         return header;
     }
 
@@ -155,24 +158,12 @@ public class MenuView extends VerticalLayout {
     public void configurePrimary() {
         fillers.clear();
         HorizontalLayout mealDays = new HorizontalLayout();
-        HorizontalLayout header = new HorizontalLayout();
         primaryGrid = new GridRenderer();
-        Button clearMeals = new Button("Clear meals", (e) -> {
-            List<Meal> meals = service.findAllByMealDayNotNull();
-            LOG.info(meals.toString());
-            meals.forEach(meal -> meal.setMealDay(null));
-            service.saveAll(meals);
-            update();
-        });
-        header.setWidthFull();
-        clearMeals.getStyle().set("margin-left", "1%");
-        header.add(clearMeals);
-        mealDays.add(header);
         configureGrid("PRIMARY");
         mealDays.addClassNames(LumoUtility.Padding.XSMALL);
         mealDays.setSizeFull();
         primary.addClassName(LumoUtility.Padding.SMALL);
-        primary.add(header, primaryGrid);
+        primary.add(primaryGrid);
     }
 
 
@@ -190,13 +181,11 @@ public class MenuView extends VerticalLayout {
            case "PRIMARY":
                for (Constants.Days day : Constants.Days.dayArray) {
                    Div tile = new Div();
-//                   tile.setWidth("140px");
-//                   tile.setHeight("140px");
                    H3 dayHeader = new H3(day.value + ":");
                    tile.add(dayHeader);
                    Optional<Meal> meal = service.findByMealDay(day);
                    if (meal.isPresent()) {
-                       ReactCard m2 = menuMealGeneratorV2(meal.get());
+                       MealRendererV2 m2 = menuMealGenerator(meal.get());
                        tile.add(m2);
                    } else {
                        Filler filler = new Filler(" ", day);
@@ -215,7 +204,7 @@ public class MenuView extends VerticalLayout {
                }
                meals = meals.stream().sorted(Comparator.comparing(Meal::getMealName)).toList();
                for (Meal m: meals){
-                   secondaryGrid.add(menuMealGeneratorV2(m));
+                   secondaryGrid.add(menuMealGenerator(m));
                }
                break;
 
@@ -260,24 +249,17 @@ public class MenuView extends VerticalLayout {
         return rendererV2;
     }
 
-    private ReactCard menuMealGeneratorV2(Meal meal){
-        if(meal.getPictureUrl() != null){
-            return new ReactCard(meal.getMealName(), meal.getPictureUrl().toString());
-        }
-        return new ReactCard(meal.getMealName(), null);
-    }
-
 
     class Filler extends ReactCard implements HasStyle {
         private DropTarget<Filler> dropTarget;
 
         public Filler(String titleText, Constants.Days day) {
             super(titleText);
-
             dropTarget = DropTarget.configure(this);
-
+            this.getStyle().set("opacity", "0.3");
             this.dropTarget.setActive(true);
             this.setVisible(true);
+
 
             dropTarget.addDropListener(e -> e.getDragData().ifPresent(o -> {
                 LOG.info("Dropped on day: " + day);

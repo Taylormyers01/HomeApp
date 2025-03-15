@@ -22,6 +22,7 @@ class ReactCard extends ReactAdapterElement {
                     ) : (
                         <Icon slot="media" icon="vaadin:question" className="bg-primary-10 text-primary" />
                     )}
+                    {/*style={{ textAlign: "center" }}*/}
                     <div slot="title">{title}</div>
                     {subtitle != null ? (
                         <div slot="subtitle">{subtitle}</div>
@@ -33,7 +34,12 @@ class ReactCard extends ReactAdapterElement {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
           gap: 1em;
+          width: 160px
+          height: 200px
         }
+        // .card-grid:hover {
+        //   opacity: 1.0;
+        // }
       `}</style>
             </div>
         );
