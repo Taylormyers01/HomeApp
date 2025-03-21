@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class Task {
 
     @Id
@@ -28,9 +30,8 @@ public class Task {
     @Column(name = "task_name", nullable = false)
     private String taskName;
 
-
-    @Column(name = "completed")
-    private Boolean completed;
+    @Column(name = "completed", columnDefinition = "boolean default false")
+    private Boolean completed = false;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     private User user;

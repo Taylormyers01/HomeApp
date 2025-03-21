@@ -1,0 +1,4 @@
+bootRun{
+    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'dev'
+    environment VAADIN_PROD: environment.VAADIN_PROD ?: false
+}

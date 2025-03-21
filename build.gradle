@@ -1,27 +1,38 @@
 plugins {
 	id 'java'
+//	id 'groovy'
 	id 'application'
-	id 'org.springframework.boot' version '3.2.1'
-	id 'io.spring.dependency-management' version '1.1.4'
-	id 'com.vaadin' version '24.3.3'
+	id 'org.springframework.boot' version '3.4.1'
+	id "io.spring.dependency-management" version '1.1.4'
+	id 'com.vaadin' version '24.7.0.beta1'
 }
+
+apply from: 'gradle/spring-rest-jumpstart.gradle'
 
 group = 'com.myershome'
 version = '0.0.1-SNAPSHOT'
 
 // mainClassName=
-
 java {
 	sourceCompatibility = '17'
+}
+//had to set to stop it from making 2 .jar files in build/libs
+jar{
+	enabled=false
+}
+
+vaadin {
+	productionMode = (boolean)"${System.getenv("VAADIN_PROD")}"
 }
 
 repositories {
 	mavenCentral()
-	maven { url = "https://maven.vaadin.com/vaadin-addons" }
+//	maven { url = "https://maven.vaadin.com/vaadin-addons" }
+//	maven { url = "https://maven.vaadin.com/vaadin-prereleases/" }
 }
 
 ext {
-	set('vaadinVersion', "24.3.3")
+	set('vaadinVersion', "${vaadinVersion}")
 }
 
 dependencies {
@@ -35,6 +46,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 	implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+	implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4.1'
+
+
+	// implementation "org.vaadin.pekka:wysiwyg_e-java:2.0.1"
+
+//	implementation group: 'com.vaadin', name: 'vaadin-gradle-plugin', version: '20.0-SNAPSHOT'
 
 }
 
@@ -44,6 +61,7 @@ dependencyManagement {
 	}
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
+
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}

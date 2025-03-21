@@ -6,10 +6,24 @@ services:
     volumes:
       - db:/data/db
     restart: always
+    profiles:
+      - dev
     environment:
       MYSQL_ROOT_PASSWORD: homeapp123
       MYSQL_DATABASE: homeapp
+      SPRING_PROFILES_ACTIVE: dev
+      VAADIN_PROD: false
+  myapp:
+    profiles:
+      - prod
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      VAADIN_PROD: true
+    build: .
+    ports:
+      - "55000:8080"
 volumes:
   db:
     driver:
       local
+
