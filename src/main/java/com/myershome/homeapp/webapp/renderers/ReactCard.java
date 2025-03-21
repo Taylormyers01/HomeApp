@@ -12,15 +12,16 @@ import com.vaadin.flow.component.react.ReactAdapterComponent;
 public class ReactCard extends ReactAdapterComponent {
 
     public ReactCard(){
-        this(Constants.CARDTYPES.ICON, "", null);
+        this(Constants.CARDTYPES.ICON, "", "https://cdn-icons-png.freepik.com/512/107/107071.png");
+
     }
 
     public ReactCard(Constants.CARDTYPES cardtype){
-        this(cardtype,"", null);
+        this(cardtype,"", "https://cdn-icons-png.freepik.com/512/107/107071.png");
     }
 
     public ReactCard(String title){
-        this(Constants.CARDTYPES.ICON, title, null);
+        this(Constants.CARDTYPES.ICON, title, "https://cdn-icons-png.freepik.com/512/107/107071.png");
     }
 
     public ReactCard(Constants.CARDTYPES cardType, String title, String value){

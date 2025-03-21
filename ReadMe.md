@@ -15,6 +15,10 @@ docker-compose down && docker-compose --profile dev up -d && SPRING_PROFILES_ACT
     ```bash
     docker commit homeapp-myapp-1 taylormyers01/homeapp
     ```
+- Multi platform build 
+    ```bash
+    docker buildx build --build-arg VAADIN=true --build-arg PROFILE=prod -t taylormyers01/homeapp --platform linux/amd64,linux/arm64 .
+  ```
 - Push image to docker hub
     ```bash
     docker push taylormyers01/homeapp

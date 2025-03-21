@@ -27,8 +27,8 @@ vaadin {
 
 repositories {
 	mavenCentral()
-	maven { url = "https://maven.vaadin.com/vaadin-addons" }
-	maven { url = "https://maven.vaadin.com/vaadin-prereleases/" }
+//	maven { url = "https://maven.vaadin.com/vaadin-addons" }
+//	maven { url = "https://maven.vaadin.com/vaadin-prereleases/" }
 }
 
 ext {
@@ -51,7 +51,7 @@ dependencies {
 
 	// implementation "org.vaadin.pekka:wysiwyg_e-java:2.0.1"
 
-	implementation group: 'com.vaadin', name: 'vaadin-gradle-plugin', version: '20.0-SNAPSHOT'
+//	implementation group: 'com.vaadin', name: 'vaadin-gradle-plugin', version: '20.0-SNAPSHOT'
 
 }
 

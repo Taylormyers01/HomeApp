@@ -2,7 +2,6 @@ import '@vaadin/vaadin-lumo-styles/icons.js';
 import { Card } from '@vaadin/react-components/Card.js';
 import {ReactAdapterElement, RenderHooks} from "Frontend/generated/flow/ReactAdapter";
 import React from "react";
-import {Icon} from "@vaadin/react-components";
 
 class ReactCard extends ReactAdapterElement {
 
@@ -17,12 +16,8 @@ class ReactCard extends ReactAdapterElement {
             return (
                 <div className="card-grid">
                     {/* tag::snippet[] */}
-                    <Card theme="cover-media">
-                        {value != null ? (
-                            <img slot="media" width="200" src={value} alt=""/>
-                        ) : (
-                            <Icon slot="media" icon="vaadin:question" className="bg-primary-10 text-primary" />
-                        )}
+                    <Card theme="cover-media outlined">
+                        <img slot="media" width="200" src={value} alt=""/>
                         {/*style={{ textAlign: "center" }}*/}
                         <div slot="title">{title}</div>
                         {subtitle != null ? (
@@ -36,11 +31,15 @@ class ReactCard extends ReactAdapterElement {
           grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
           gap: 1em;
           width: 160px
-          height: 200px
+          max-height: 300px
+          max-width: 300px;
         }
-        // .card-grid:hover {
-        //   opacity: 1.0;
-        // }
+        .card-grid:hover {
+          opacity: .8;
+        }
+        img {
+            height: 200px;
+        }
       `}</style>
                 </div>
             );
@@ -58,11 +57,13 @@ class ReactCard extends ReactAdapterElement {
                     <style>{`
         vaadin-card {
           max-width: 300px;
+          // min-height: 300px;
+          height: 300px;
         }
         pre {
           overflow:auto
         }
-      `}</style>
+      `}</style>tgy
                 </>
             );
         }
